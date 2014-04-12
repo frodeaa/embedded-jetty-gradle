@@ -1,12 +1,51 @@
-apply plugin: 'java'
+// Tells gradle it is a war project which will be imported into eclipse wtp
+apply plugin: 'war'
+apply plugin: 'eclipse-wtp'
 
-sourceCompatibility = 1.5
-version = '1.0'
+// Define souce code compatibility
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
+// Use maven repository
 repositories {
     mavenCentral()
 }
 
+// Fills out all dependencies which are necessary to start the embedded jetty into our war file
+configurations {
+	embeddedJetty
+}
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+	embeddedJetty 'org.eclipse.jetty:jetty-servlet:+'
+	embeddedJetty 'org.eclipse.jetty:jetty-webapp:+'
+	embeddedJetty 'org.eclipse.jetty:jetty-jsp:+'
+	embeddedJetty 'org.eclipse.jetty:jetty-annotations:+'
+}
+
+war.baseName = 'MyExecutableWar'
+war {
+	// unzip and add all jetty dependencies into the root of our war file
+	from {configurations.embeddedJetty.collect {
+			project.zipTree(it)
+		}
+	}
+	// remove signature and unnecessary files
+	exclude "META-INF/*.SF", "META-INF/*.RSA", "about.html", "about_files/**", "readme.txt", "plugin.properties", "jetty-dir.css"
+
+	// include only the classes which will be used to start Embedded Jetty
+	from "$buildDir/classes/main"
+	exclude "com/myapp/"
+	
+	// tells the class to run when the generate war be executed using 'java -jar'
+	manifest { attributes 'Main-Class': 'com.embedded.JettyStarter' }
+}
+
+// Once you will need some basic api (e.i. servlet api) for compilation, add embeddedJetty dependencies for compilation
+sourceSets.main.compileClasspath += configurations.embeddedJetty
+
+// the same for eclipse classpath, so you can use it to edit your java files
+eclipse {
+	classpath {
+		plusConfigurations += configurations.embeddedJetty
+	}
 }

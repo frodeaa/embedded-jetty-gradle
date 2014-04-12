@@ -1,4 +1,12 @@
-// Tells gradle it is a war project which will be imported into eclipse wtp
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath(group: 'com.sahlbach.gradle', name: 'gradle-jetty-eclipse-plugin', version: '1.9.+')
+    }
+}
+apply plugin: 'jettyEclipse'
 apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
 

@@ -30,7 +30,6 @@ dependencies {
     embeddedJetty 'org.eclipse.jetty:jetty-annotations:+'
 }
 
-war.baseName = 'MyExecutableWar'
 war {
     // unzip and add all jetty dependencies into the root of our war file
     from {

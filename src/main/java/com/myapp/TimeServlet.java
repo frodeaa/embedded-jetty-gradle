@@ -13,11 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 @WebServlet(urlPatterns = { "/time" })
 public class TimeServlet extends HttpServlet {
-    
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-    {
+
+	protected void doGet( HttpServletRequest request, HttpServletResponse response )
+			throws ServletException, IOException {
 		ServletOutputStream out = response.getOutputStream();
-		out.print(new Date().toString());
+		out.print( new Date().toString() );
 		out.flush();
-    }
+	}
 }
